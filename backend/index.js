@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -45,27 +45,25 @@ app.get('/about', (req, res) => {
 });
 
 // Get all students
-app.get('/api/students', (req, res) => {
-    pool.query('SELECT * FROM students', (error, results) => {
-        if (error) {
-            console.error('Database error:', error);
-            return res.status(500).json({ error: 'Database error', message: error.message });
-        }
+app.get('/api/students', async (req, res) => {
+    try {
+        const [results] = await pool.query('SELECT * FROM students');
         res.status(200).json({
             success: true,
             data: results,
             count: results.length
         });
-    });
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error', message: error.message });
+    }
 });
 
 // Get student by ID
-app.get('/api/students/:id', (req, res) => {
-    const studentId = req.params.id;
-    pool.query('SELECT * FROM students WHERE id = ?', [studentId], (error, results) => {
-        if (error) {
-            return res.status(500).json({ error: 'Database error', message: error.message });
-        }
+app.get('/api/students/:id', async (req, res) => {
+    try {
+        const studentId = req.params.id;
+        const [results] = await pool.query('SELECT * FROM students WHERE id = ?', [studentId]);
         if (results.length === 0) {
             return res.status(404).json({ error: 'Student not found' });
         }
@@ -73,41 +71,43 @@ app.get('/api/students/:id', (req, res) => {
             success: true,
             data: results[0]
         });
-    });
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error', message: error.message });
+    }
 });
 
 // Create new student
-app.post('/api/students', (req, res) => {
-    const { name, email, phone, major } = req.body;
+app.post('/api/students', async (req, res) => {
+    try {
+        const { name, email, phone, major } = req.body;
 
-    if (!name || !email) {
-        return res.status(400).json({ error: 'Name and email are required' });
-    }
-
-    const query = 'INSERT INTO students (name, email, phone, major, created_at) VALUES (?, ?, ?, ?, NOW())';
-    pool.query(query, [name, email, phone || null, major || null], (error, results) => {
-        if (error) {
-            return res.status(500).json({ error: 'Database error', message: error.message });
+        if (!name || !email) {
+            return res.status(400).json({ error: 'Name and email are required' });
         }
+
+        const query = 'INSERT INTO students (name, email, phone, major, created_at) VALUES (?, ?, ?, ?, NOW())';
+        const [results] = await pool.query(query, [name, email, phone || null, major || null]);
         res.status(201).json({
             success: true,
             message: 'Student created',
             id: results.insertId,
             data: { id: results.insertId, name, email, phone, major }
         });
-    });
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error', message: error.message });
+    }
 });
 
 // Update student
-app.put('/api/students/:id', (req, res) => {
-    const studentId = req.params.id;
-    const { name, email, phone, major } = req.body;
+app.put('/api/students/:id', async (req, res) => {
+    try {
+        const studentId = req.params.id;
+        const { name, email, phone, major } = req.body;
 
-    const query = 'UPDATE students SET name = ?, email = ?, phone = ?, major = ?, updated_at = NOW() WHERE id = ?';
-    pool.query(query, [name, email, phone, major, studentId], (error, results) => {
-        if (error) {
-            return res.status(500).json({ error: 'Database error', message: error.message });
-        }
+        const query = 'UPDATE students SET name = ?, email = ?, phone = ?, major = ?, updated_at = NOW() WHERE id = ?';
+        const [results] = await pool.query(query, [name, email, phone, major, studentId]);
         if (results.affectedRows === 0) {
             return res.status(404).json({ error: 'Student not found' });
         }
@@ -116,16 +116,17 @@ app.put('/api/students/:id', (req, res) => {
             message: 'Student updated',
             data: { id: studentId, name, email, phone, major }
         });
-    });
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error', message: error.message });
+    }
 });
 
 // Delete student
-app.delete('/api/students/:id', (req, res) => {
-    const studentId = req.params.id;
-    pool.query('DELETE FROM students WHERE id = ?', [studentId], (error, results) => {
-        if (error) {
-            return res.status(500).json({ error: 'Database error', message: error.message });
-        }
+app.delete('/api/students/:id', async (req, res) => {
+    try {
+        const studentId = req.params.id;
+        const [results] = await pool.query('DELETE FROM students WHERE id = ?', [studentId]);
         if (results.affectedRows === 0) {
             return res.status(404).json({ error: 'Student not found' });
         }
@@ -133,7 +134,10 @@ app.delete('/api/students/:id', (req, res) => {
             success: true,
             message: 'Student deleted'
         });
-    });
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error', message: error.message });
+    }
 });
 
 // Start server
