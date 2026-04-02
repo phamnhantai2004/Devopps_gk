@@ -1,59 +1,63 @@
 version: '3.8'
 
 services:
-  db:
-    image: mysql:8.0
-    container_name: student_db
-    environment:
-      MYSQL_ROOT_PASSWORD: password123
-      MYSQL_DATABASE: student_db
+  database:
+    build:
+      context: ./database
+    container_name: devops_database
     ports:
       - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password123
+      MYSQL_DATABASE: devops_db
     volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     networks:
-      - app-network
+      - devops_network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
-    build: ./backend
-    container_name: student_backend
-    environment:
-      PORT: 3000
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: password123
-      DB_NAME: student_db
-      APP_NAME: "Student Management System"
-      NODE_ENV: production
+    build:
+      context: ./backend
+    container_name: devops_backend
     ports:
       - "3000:3000"
+    environment:
+      PORT: 3000
+      APP_NAME: DevOps Student Management
+      DB_HOST: database
+      DB_USER: root
+      DB_PASSWORD: password123
+      DB_NAME: devops_db
+      STUDENT_NAME: Nguyễn Văn Thương
+      STUDENT_ID: MS20001
+      CLASS: D20CNTT1
     depends_on:
-      db:
+      database:
         condition: service_healthy
     networks:
-      - app-network
+      - devops_network
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
-    container_name: student_frontend
+    build:
+      context: ./frontend
+    container_name: devops_frontend
     ports:
       - "80:80"
     depends_on:
       - backend
     networks:
-      - app-network
+      - devops_network
     restart: unless-stopped
 
 volumes:
-  db_data:
+  mysql_data:
 
 networks:
-  app-network:
+  devops_network:
     driver: bridge
