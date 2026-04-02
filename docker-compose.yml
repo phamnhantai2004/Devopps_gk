@@ -11,7 +11,7 @@ services:
       MYSQL_USER: devops_user
       MYSQL_PASSWORD: devops_password_123
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -66,7 +66,7 @@ services:
       dockerfile: Dockerfile
     container_name: devops-frontend
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - backend
     volumes:
