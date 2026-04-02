@@ -1,113 +1,153 @@
-​# Quick Start Guide
+# Hướng Dẫn Nhanh - DevOps Project
 
-## Bắt Đầu Nhanh
+Chạy dự án DevOps Student Management System trong 3 bước.
 
-### Chạy Ứng Dụng Cục Bộ (Local)
+## 🚀 Bước 1: Chuẩn Bị
 
-#### 1. Cài Đặt Dependencies
 ```bash
-cd backend
-npm install
+# Clone repository
+git clone https://github.com/phamnhantai2004/devops-project.git
+cd devops-project
 ```
 
-#### 2. Thiết Lập Database (MySQL)
-Đảm bảo MySQL đang chạy, sau đó import init.sql:
-```bash
-mysql -u root -p < database/init.sql
-```
-
-#### 3. Chạy Backend
-```bash
-cd backend
-npm start
-```
-Server chạy tại `http://localhost:3000`
-
-#### 4. Chạy Frontend
-- Mở file `frontend/index.html` trực tiếp trong trình duyệt
-- Hoặc sử dụng web server (Live Server trong VSCode)
-
-### Chạy với Docker Compose (Khuyến Nghị)
+## 📦 Bước 2: Build & Run
 
 ```bash
-# Build và chạy tất cả services
+# Khởi động tất cả services (Backend + Frontend + MySQL Database)
 docker-compose up --build
+```
 
-# Chạy ở background
-docker-compose up -d
+Chờ khoảng 30 giây để tất cả services khởi động hoàn tất.
 
-# Xem logs
-docker-compose logs -f
+## ✅ Bước 3: Truy Cập Ứng Dụng
 
-# Dừng services
+**Frontend (Giao diện chính)**
+```
+http://localhost
+```
+
+**Health Check (Kiểm tra trạng thái)**
+```
+http://localhost:3000/health
+```
+
+**Thông Tin Sinh Viên**
+```
+http://localhost:3000/about
+```
+
+**API Students (Danh sách sinh viên)**
+```
+http://localhost:3000/api/students
+```
+
+## 🎯 Các Lệnh Hữu Ích
+
+```bash
+# Xem trạng thái containers
+docker-compose ps
+
+# Xem logs của backend
+docker-compose logs -f backend
+
+# Xem logs của frontend
+docker-compose logs -f frontend
+
+# Xem logs của database
+docker-compose logs -f mysql
+
+# Stop tất cả services
 docker-compose down
 
-# Dừng và xóa volumes
+# Stop và xóa dữ liệu
 docker-compose down -v
 ```
 
-### Kiểm Tra Ứng Dụng
+## 🐳 Push lên Docker Hub
 
-1. **Frontend**: http://localhost
-2. **Health Check**: http://localhost:3000/health
-3. **Student Info**: http://localhost:3000/about
-4. **API**: http://localhost:3000/api/students
-
-### Cấu Hình
-
-Chỉnh sửa `.env` để thay đổi:
-- Thông tin sinh viên
-- Cấu hình database
-- Cổng mạng
-- Tên ứng dụng
-
-## Các Lệnh Hữu Ích
-
-### Git Commands
 ```bash
-# Xem branches
-git branch -a
+# Build images
+docker-compose build
 
-# Chuyển branch
-git checkout develop
-git checkout -b feature/new-feature
+# Tag images
+docker tag devops_backend:latest phamtai123/devops-backend:latest
+docker tag devops_frontend:latest phamtai123/devops-frontend:latest
 
-# Commit
-git add .
-git commit -m "message"
-
-# Push
-git push origin <branch-name>
-
-# Pull
-git pull origin main
+# Push lên Docker Hub
+docker push phamtai123/devops-backend:latest
+docker push phamtai123/devops-frontend:latest
 ```
 
-### Docker Commands
+## 📋 API Endpoints
+
+### Health Check
 ```bash
-# Build image
-docker build -t app-backend -f backend/Dockerfile .
-
-# Push to Docker Hub
-docker tag app-backend username/app-backend:latest
-docker push username/app-backend:latest
-
-# List images
-docker images
-
-# List containers
-docker ps -a
-
-# Clean up
-docker system prune -a
+curl http://localhost:3000/health
+# Response: {"status":"ok", "service":"DevOps Student Management System"}
 ```
 
-## Troubleshooting
-
-### Port Already in Use
+### Thông Tin Sinh Viên
 ```bash
-# Windows (PowerShell)
-netstat -ano | findstr :3000
+curl http://localhost:3000/about
+# Response: {"student_name":"Phạm Nhân Tài", "student_id":"2251220183", "class":"22ct4"}
+```
+
+### Lấy Danh Sách Sinh Viên
+```bash
+curl http://localhost:3000/api/students
+```
+
+### Thêm Sinh Viên Mới
+```bash
+curl -X POST http://localhost:3000/api/students \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Nguyễn Văn X","email":"x@email.com","phone":"0123456789","major":"IT"}'
+```
+
+### Cập Nhật Sinh Viên
+```bash
+curl -X PUT http://localhost:3000/api/students/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Tên mới","email":"email@new.com"}'
+```
+
+### Xóa Sinh Viên
+```bash
+curl -X DELETE http://localhost:3000/api/students/1
+```
+
+## 🛠 Cấu Hình
+
+Mọi tham số cấu hình trong file `.env`:
+
+```env
+# Thông tin sinh viên
+STUDENT_NAME=Phạm Nhân Tài
+STUDENT_ID=2251220183
+CLASS=22ct4
+
+# Backend
+PORT=3000
+APP_NAME=DevOps Student Management System
+NODE_ENV=production
+
+# Database
+DB_HOST=mysql
+DB_USER=devops_user
+DB_PASSWORD=devops_password_123
+DB_NAME=devops_db
+DB_PORT=3306
+
+# Docker Hub
+DOCKER_REGISTRY=phamtai123
+```
+
+## ⚠️ Sự Cố Thường Gặp
+
+### Lỗi: "Port 3000 is already in use"
+```bash
+# Windows
+netstat -ano | find ":3000"
 taskkill /PID <PID> /F
 
 # Linux/Mac
@@ -115,23 +155,18 @@ lsof -i :3000
 kill -9 <PID>
 ```
 
-### Database Connection Error
-- Kiểm tra MySQL đang chạy
-- Kiểm tra DATABASE_URL đúng trong `.env`
-- Kiểm tra username/password
+### Lỗi: "Cannot connect to database"
+- Chờ MySQL container khởi động (30 giây)
+- Kiểm tra: `docker-compose logs mysql`
+- Kiểm tra DB_HOST = "mysql" trong .env
 
-### CORS Error
-- Kiểm tra frontend URL trong CORS configuration
-- Kiểm tra backend CORS middleware
+### Frontend không hiển thị dữ liệu
+- Kiểm tra backend: http://localhost:3000/health
+- Xóa cache browser: Ctrl+Shift+Delete
+- Check logs: `docker-compose logs frontend`
 
-### Docker Issues
-```bash
-# Rebuild without cache
-docker-compose up --build --no-cache
+---
 
-# Remove all containers
-docker-compose down -v
+💡 **Tip**: Tất cả dữ liệu sẽ được lưu trong MySQL database, không bị mất khi restart container.
 
-# Check logs
-docker-compose logs <service-name>
-```
+Để xóa dữ liệu: `docker-compose down -v`
