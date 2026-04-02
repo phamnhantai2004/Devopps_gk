@@ -1,89 +1,554 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management System</title>
-    <link rel="stylesheet" href="style.css">
+    <title>DevOps Student Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        header .info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        header .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            text-align: center;
+        }
+
+        header .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        header .info-item .value {
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        nav button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        nav button:hover {
+            background: #764ba2;
+        }
+
+        nav button.active {
+            background: #764ba2;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .student-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .student-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .student-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .student-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .student-card .actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #e6ffe6;
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .health-status {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .status-ok {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .status-error {
+            color: #c0392b;
+            font-weight: bold;
+        }
+        }
+
+        header .info-item label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        header .info-item span {
+            color: #666;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input,
+        textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .student-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .student-email {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            padding: 8px 12px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 6px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        .status {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>Student Management System</h1>
-            <nav>
-                <ul>
-                    <li><a href="#students">Students</a></li>
-                    <li><a href="#add-student">Add Student</a></li>
-                    <li><a href="/about" target="_blank">About</a></li>
-                </ul>
-            </nav>
+            <h1>📚 DevOps Student Management System</h1>
+            <div class="info">
+                <div class="info-item">
+                    <label>Họ tên sinh viên:</label>
+                    <span id="studentName">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <label>Mã số sinh viên:</label>
+                    <span id="studentId">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <label>Lớp:</label>
+                    <span id="studentClass">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <label>Server Status:</label>
+                    <span id="serverStatus">Checking...</span>
+                </div>
+            </div>
         </header>
 
-        <main>
-            <!-- Health Check Status -->
-            <section class="status-section">
-                <h2>System Status</h2>
-                <div id="health-status" class="status-box">Loading...</div>
-            </section>
-
-            <!-- Student List Section -->
-            <section id="students" class="students-section">
-                <h2>Students List</h2>
-                <button id="refresh-btn" class="btn btn-primary">Refresh</button>
-                <table id="students-table" class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Class</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="students-body">
-                        <tr>
-                            <td colspan="5" class="loading">Loading students...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <!-- Add/Edit Student Section -->
-            <section id="add-student" class="form-section">
-                <h2 id="form-title">Add New Student</h2>
-                <form id="student-form" class="form">
-                    <input type="hidden" id="student-id">
-
-                    <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="class_name">Class:</label>
-                        <input type="text" id="class_name" name="class_name" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-success" id="submit-btn">Add Student</button>
-                    <button type="button" class="btn btn-secondary" id="cancel-btn"
-                        style="display: none;">Cancel</button>
+        <div class="content">
+            <!-- Form thêm sinh viên -->
+            <div class="card">
+                <h2>➕ Thêm Sinh Viên Mới</h2>
+                <div class="status" id="formStatus"></div>
+                <form id="addStudentForm">
+                    <input type="text" id="name" placeholder="Họ tên" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="tel" id="phone" placeholder="Số điện thoại (optional)">
+                    <input type="text" id="major" placeholder="Chuyên ngành (optional)">
+                    <button type="submit">Thêm Sinh Viên</button>
                 </form>
-            </section>
-        </main>
+            </div>
 
-        <footer>
-            <p>&copy; 2026 Student Management System. All rights reserved.</p>
-        </footer>
+            <!-- Danh sách sinh viên -->
+            <div class="card">
+                <h2>📋 Danh Sách Sinh Viên</h2>
+                <div id="studentList" class="student-list">
+                    <div class="loading">Đang tải dữ liệu...</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Determine API base URL - works both locally and in Docker
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3000'
+            : `http://${window.location.hostname}:3000`;
+
+        // Lấy thông tin sinh viên từ /about
+        async function loadAboutInfo() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/about`);
+                const data = await response.json();
+                document.getElementById('studentName').textContent = data.student_name;
+                document.getElementById('studentId').textContent = data.student_id;
+                document.getElementById('studentClass').textContent = data.class;
+            } catch (error) {
+                console.error('Error loading about info:', error);
+            }
+        }
+
+        // Kiểm tra health check
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                if (data.status === 'ok') {
+                    document.getElementById('serverStatus').textContent = '✅ Online';
+                    document.getElementById('serverStatus').style.color = '#28a745';
+                }
+            } catch (error) {
+                document.getElementById('serverStatus').textContent = '❌ Offline';
+                document.getElementById('serverStatus').style.color = '#dc3545';
+            }
+        }
+
+        // Lấy danh sách sinh viên
+        async function loadStudents() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/students`);
+                const students = await response.json();
+                const list = document.getElementById('studentList');
+
+                if (students.length === 0) {
+                    list.innerHTML = '<p style="color:#999; text-align:center;">Chưa có sinh viên nào</p>';
+                    return;
+                }
+
+                list.innerHTML = students.map(student => `
+                    <div class="student-item">
+                        <div class="student-info">
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-email">📧 ${student.email}</div>
+                            ${student.phone ? `<div class="student-email">📱 ${student.phone}</div>` : ''}
+                            ${student.major ? `<div class="student-email">🎓 ${student.major}</div>` : ''}
+                        </div>
+                        <button class="delete-btn" onclick="deleteStudent(${student.id})">Xóa</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('studentList').innerHTML = `<p style="color:red;">Lỗi: ${error.message}</p>`;
+            }
+        }
+
+        // Thêm sinh viên mới
+        document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const student = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                major: document.getElementById('major').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/students`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(student)
+                });
+
+                const data = await response.json();
+
+                const statusDiv = document.getElementById('formStatus');
+                if (response.ok) {
+                    statusDiv.textContent = '✅ Thêm sinh viên thành công!';
+                    statusDiv.classList.add('show');
+                    document.getElementById('addStudentForm').reset();
+                    loadStudents();
+                } else {
+                    statusDiv.textContent = '❌ ' + (data.error || 'Lỗi khi thêm sinh viên');
+                    statusDiv.classList.add('show', 'error');
+                }
+                setTimeout(() => statusDiv.classList.remove('show'), 3000);
+            } catch (error) {
+                const statusDiv = document.getElementById('formStatus');
+                statusDiv.textContent = '❌ Lỗi: ' + error.message;
+                statusDiv.classList.add('show', 'error');
+            }
+        });
+
+        // Xóa sinh viên
+        async function deleteStudent(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa sinh viên này?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/students/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadStudents();
+                } else {
+                    alert('Lỗi khi xóa sinh viên');
+                }
+            } catch (error) {
+                alert('Lỗi: ' + error.message);
+            }
+        }
+
+        // Load dữ liệu khi trang load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAboutInfo();
+            checkServerStatus();
+            loadStudents();
+            setInterval(checkServerStatus, 5000);
+        });
+    </script>
 </body>
 
 </html>
