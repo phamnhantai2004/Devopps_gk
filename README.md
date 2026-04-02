@@ -10,9 +10,9 @@
 
 ## 👨‍🎓 Thông Tin Sinh Viên
 
-- **Họ Tên**: Your Full Name
-- **Mã Số Sinh Viên**: SV001
-- **Lớp**: DevOps Class 2026
+- **Họ Tên**: Phạm Nhân Tài
+- **Mã Số Sinh Viên**: 2251220183
+- **Lớp**: 22CT4
 
 ## ✨ Tính Năng Chính
 
