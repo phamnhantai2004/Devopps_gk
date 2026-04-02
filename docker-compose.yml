@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   database:
     build:
@@ -33,9 +31,9 @@ services:
       DB_USER: root
       DB_PASSWORD: password123
       DB_NAME: devops_db
-      STUDENT_NAME: Nguyễn Văn Thương
-      STUDENT_ID: MS20001
-      CLASS: D20CNTT1
+      STUDENT_NAME: Phạm Nhân Tài
+      STUDENT_ID: 2251220183
+      CLASS: 22CT4
     depends_on:
       database:
         condition: service_healthy
