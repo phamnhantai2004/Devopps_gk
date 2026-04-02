@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Management System</h1>
+            <nav>
+                <ul>
+                    <li><a href="#students">Students</a></li>
+                    <li><a href="#add-student">Add Student</a></li>
+                    <li><a href="/about" target="_blank">About</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Health Check Status -->
+            <section class="status-section">
+                <h2>System Status</h2>
+                <div id="health-status" class="status-box">Loading...</div>
+            </section>
+
+            <!-- Student List Section -->
+            <section id="students" class="students-section">
+                <h2>Students List</h2>
+                <button id="refresh-btn" class="btn btn-primary">Refresh</button>
+                <table id="students-table" class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Class</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-body">
+                        <tr>
+                            <td colspan="5" class="loading">Loading students...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Add/Edit Student Section -->
+            <section id="add-student" class="form-section">
+                <h2 id="form-title">Add New Student</h2>
+                <form id="student-form" class="form">
+                    <input type="hidden" id="student-id">
+
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="class_name">Class:</label>
+                        <input type="text" id="class_name" name="class_name" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success" id="submit-btn">Add Student</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-btn"
+                        style="display: none;">Cancel</button>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Student Management System. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
